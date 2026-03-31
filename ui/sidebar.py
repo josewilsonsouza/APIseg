@@ -92,7 +92,7 @@ def render_sidebar():
             _executar = st.button("▶ Executar", width='stretch', key="run_exec")
 
         if _executar:
-            import subprocess, os
+            import subprocess, os, datetime
             fontes_run = _run_fontes or ["bacen", "ibge", "ipea"]
             label_run  = " ".join(FONTE_LABELS[f] for f in fontes_run)
             with st.spinner(f"Executando: {label_run} …"):
@@ -101,12 +101,16 @@ def render_sidebar():
                     [sys.executable, str(ROOT / "run.py")] + fontes_run,
                     capture_output=True, text=True, encoding="utf-8", cwd=str(ROOT), env=_env,
                 )
+            st.session_state["ultimo_log"] = {
+                "timestamp": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                "fontes":    fontes_run,
+                "sucesso":   result.returncode == 0,
+                "stdout":    result.stdout,
+                "stderr":    result.stderr,
+            }
             if result.returncode == 0:
                 api_loader.clear_cache()
-                st.success("Concluído!")
-                st.rerun()
-            else:
-                st.error(f"Erro na execução:\n\n```\n{result.stderr[-600:]}\n```")
+            st.rerun()
 
         st.write("---")
 

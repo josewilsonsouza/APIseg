@@ -18,10 +18,12 @@ _AMARELO = "#FFD114"
 
 
 def render(ctx) -> None:
+    log = st.session_state.get("ultimo_log")
     render_toc([
         ("KPI Cards",            "home-kpi"),
-        ("Breakdown por Fonte",  "home-chart"),
+        ("Status por Fonte",     "home-chart"),
         ("Resumo por Indicador", "home-tabela"),
+        *([("Log de Execução",   "home-log")] if log else []),
     ])
 
     _corte_label = ""
@@ -73,7 +75,7 @@ def render(ctx) -> None:
 
     # ── Breakdown por fonte ───────────────────────────────────────────────────
     anchor("home-chart")
-    st.subheader("Breakdown por Fonte")
+    st.subheader("Status por Fonte")
 
     rows = []
     for fonte in ctx.fontes:
@@ -113,34 +115,33 @@ def render(ctx) -> None:
 
     # ── Tabela resumo ─────────────────────────────────────────────────────────
     anchor("home-tabela")
-    st.subheader("Resumo por Indicador")
+    with st.expander("Resumo por Indicador", expanded=False):
+        frames = []
+        for fonte in ctx.fontes:
+            df_r = ctx.resumos.get(fonte)
+            if df_r is not None and not df_r.empty:
+                df_r = df_r.copy()
+                df_r.insert(0, "Fonte", ctx.fonte_labels[fonte])
+                frames.append(df_r)
 
-    frames = []
-    for fonte in ctx.fontes:
-        df_r = ctx.resumos.get(fonte)
-        if df_r is not None and not df_r.empty:
-            df_r = df_r.copy()
-            df_r.insert(0, "Fonte", ctx.fonte_labels[fonte])
-            frames.append(df_r)
-
-    if frames:
-        df_all = pd.concat(frames, ignore_index=True)
-        st.dataframe(
-            df_all,
-            width='stretch',
-            hide_index=True,
-            column_config={
-                "Fonte":             st.column_config.TextColumn("Fonte", width="small"),
-                "Indicador":         st.column_config.TextColumn("Indicador", width="large"),
-                "Registros API":     st.column_config.NumberColumn("API", format="%d"),
-                "Registros Cognos":  st.column_config.NumberColumn("Cognos", format="%d"),
-                "Coincidentes":      st.column_config.NumberColumn("Coinc.", format="%d"),
-                "Divergências":      st.column_config.TextColumn("Diverg."),
-                "Status":            st.column_config.TextColumn("Status"),
-            },
-        )
-    else:
-        st.info("Nenhum relatório encontrado. Execute `python run.py` para gerar os dados.")
+        if frames:
+            df_all = pd.concat(frames, ignore_index=True)
+            st.dataframe(
+                df_all,
+                width='stretch',
+                hide_index=True,
+                column_config={
+                    "Fonte":             st.column_config.TextColumn("Fonte", width="small"),
+                    "Indicador":         st.column_config.TextColumn("Indicador", width="large"),
+                    "Registros API":     st.column_config.NumberColumn("API", format="%d"),
+                    "Registros Cognos":  st.column_config.NumberColumn("Cognos", format="%d"),
+                    "Coincidentes":      st.column_config.NumberColumn("Coinc.", format="%d"),
+                    "Divergências":      st.column_config.TextColumn("Diverg."),
+                    "Status":            st.column_config.TextColumn("Status"),
+                },
+            )
+        else:
+            st.info("Nenhum relatório encontrado. Execute `python run.py` para gerar os dados.")
 
     # ── Exportar dados brutos da API ──────────────────────────────────────────
     st.markdown("---")
@@ -164,3 +165,38 @@ def render(ctx) -> None:
             else:
                 st.button(f"⬇ {label}", disabled=True, key=f"export_api_{fonte}_dis")
                 st.caption("Sem dados — execute a validação")
+
+    # ── Log da última execução ────────────────────────────────────────────────
+    log = st.session_state.get("ultimo_log")
+    if log:
+        anchor("home-log")
+        st.markdown("---")
+
+        sucesso    = log["sucesso"]
+        status_cor = CNSEG_TEAL if sucesso else CNSEG_RED
+        status_txt = "Sucesso" if sucesso else "Erro"
+        status_ico = "✔" if sucesso else "✖"
+        fontes_txt = " · ".join(f.upper() for f in log["fontes"])
+
+        st.markdown(
+            f'<div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem">'
+            f'<span style="font-size:1.1rem;font-weight:700">📋 Log da última execução</span>'
+            f'<span style="background:{status_cor}22;color:{status_cor};font-weight:600;'
+            f'padding:2px 10px;border-radius:20px;font-size:0.82rem">'
+            f'{status_ico} {status_txt}</span>'
+            f'<span style="font-size:0.8rem;opacity:0.55">{log["timestamp"]} · {fontes_txt}</span>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+
+        with st.expander("Ver saída completa", expanded=not sucesso):
+            if log["stdout"].strip():
+                st.code(log["stdout"], language=None)
+            if log["stderr"].strip():
+                st.markdown(
+                    f'<p style="color:{CNSEG_RED};font-size:0.82rem;font-weight:600;margin:0.5rem 0 0.2rem">Stderr:</p>',
+                    unsafe_allow_html=True,
+                )
+                st.code(log["stderr"], language=None)
+            if not log["stdout"].strip() and not log["stderr"].strip():
+                st.caption("Nenhuma saída registrada.")
