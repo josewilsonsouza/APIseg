@@ -16,7 +16,11 @@ def render(ctx) -> None:
         ("Top Indicadores",  "div-chart"),
     ])
 
-    st.title("Divergências", text_alignment="center")
+    _meses = {1:"Jan",2:"Fev",3:"Mar",4:"Abr",5:"Mai",6:"Jun",
+              7:"Jul",8:"Ago",9:"Set",10:"Out",11:"Nov",12:"Dez"}
+    _corte = (f"  —  até {_meses[ctx.corte_mes]}/{ctx.corte_ano}"
+              if ctx.corte_ano else "")
+    st.title(f"Divergências{_corte}", text_alignment="center")
     st.markdown("---")
 
     # ── Combina dados de todas as fontes selecionadas ─────────────────────────
@@ -62,12 +66,10 @@ def render(ctx) -> None:
     with col_info:
         st.caption(f"{len(df_filt):,} registros exibidos de {len(df_all):,} no total")
     with col_btn:
-        import io
-        _buf = io.BytesIO()
-        df_filt.to_excel(_buf, index=False)
+        from utils.tables import export_divergencias_excel
         st.download_button(
             label="⬇ Exportar",
-            data=_buf.getvalue(),
+            data=export_divergencias_excel(df_filt),
             file_name="divergencias_filtradas.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             key="div_export",

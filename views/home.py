@@ -7,8 +7,6 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-import io
-
 from ui.colors import CNSEG_ORANGE, CNSEG_TEAL, CNSEG_RED
 from ui.toc import render_toc, anchor
 from ui.kpi import kpi
@@ -152,11 +150,24 @@ def render(ctx) -> None:
             df_api = api_loader.load_dados_api(fonte)
             label  = ctx.fonte_labels[fonte]
             if df_api is not None and not df_api.empty:
-                buf = io.BytesIO()
-                df_api.to_excel(buf, index=False)
+                from utils.tables import export_dados_api_excel
+                if ctx.corte_ano is not None:
+                    _mask = ((df_api["Ano"] < ctx.corte_ano) |
+                             ((df_api["Ano"] == ctx.corte_ano) & (df_api["Mês"] <= ctx.corte_mes)))
+                    df_api = df_api[_mask]
+                _meses = {1:"Jan",2:"Fev",3:"Mar",4:"Abr",5:"Mai",6:"Jun",
+                          7:"Jul",8:"Ago",9:"Set",10:"Out",11:"Nov",12:"Dez"}
+                _per_lbl = (f"até {_meses[ctx.corte_mes]}/{ctx.corte_ano}"
+                            if ctx.corte_ano else "histórico completo")
+                _cor = ctx.fonte_cores[fonte].lstrip("#")
                 st.download_button(
                     label=f"⬇ {label}",
-                    data=buf.getvalue(),
+                    data=export_dados_api_excel(
+                        df_api,
+                        fonte_label=label,
+                        tab_color=_cor,
+                        periodo_label=_per_lbl,
+                    ),
                     file_name=f"dados_api_{fonte}.xlsx",
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                     key=f"export_api_{fonte}",
