@@ -70,8 +70,9 @@ def report_mtime(fonte: str) -> str | None:
     p = _report_path(fonte)
     if not p.exists():
         return None
+    from zoneinfo import ZoneInfo
     ts = p.stat().st_mtime
-    return datetime.datetime.fromtimestamp(ts).strftime("%d/%m/%Y %H:%M")
+    return datetime.datetime.fromtimestamp(ts, tz=ZoneInfo("America/Sao_Paulo")).strftime("%d/%m/%Y %H:%M")
 
 
 def clear_cache() -> None:

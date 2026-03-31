@@ -93,6 +93,7 @@ def render_sidebar():
 
         if _executar:
             import subprocess, os, datetime
+            from zoneinfo import ZoneInfo
             fontes_run = _run_fontes or ["bacen", "ibge", "ipea"]
             label_run  = " ".join(FONTE_LABELS[f] for f in fontes_run)
             with st.spinner(f"Executando: {label_run} …"):
@@ -102,7 +103,7 @@ def render_sidebar():
                     capture_output=True, text=True, encoding="utf-8", cwd=str(ROOT), env=_env,
                 )
             st.session_state["ultimo_log"] = {
-                "timestamp": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                "timestamp": datetime.datetime.now(tz=ZoneInfo("America/Sao_Paulo")).strftime("%d/%m/%Y %H:%M:%S"),
                 "fontes":    fontes_run,
                 "sucesso":   result.returncode == 0,
                 "stdout":    result.stdout,
