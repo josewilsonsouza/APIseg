@@ -1,0 +1,228 @@
+/* 
+   AMseg · CNseg — Estilos globais
+    
+   É interessante dar uma olhada também no arquivo .streamlit/config.toml, 
+   onde estão definidas as cores do tema. Pois lá as cores de fontes por exemplo são definidas,
+   além de configurações específicas para o sidebar. 
+   Este aquivo styles.css configura algumas funcionalidades dos botões de navegação do sidebar.
+   */
+
+/* Layout principal */
+div.block-container {
+    padding-top: 2.7rem !important;
+}
+.main .block-container {
+    max-width: 100%;
+    padding-bottom: 3rem;
+    margin: 0 auto;
+}
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+/* Fundo escuro CNseg — fixo independente do tema
+[data-testid="stSidebar"] > div:first-child {
+    background-color: #403D4A;
+} */
+
+/* Todo texto dentro da sidebar -> branco (garante legibilidade no tema light).
+ASSIM, no config.toml a cor do texto afeta só o conteudo dentro de selectbox.
+enquanto que aqui garantimos o texto de fora fique adequado
+*/
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3,
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] span,
+[data-testid="stSidebar"] small,
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p,
+[data-testid="stSidebar"] [data-testid="stCaptionContainer"] p {
+    color: #e8e8e8 !important;
+}
+
+/* Expander */
+[data-testid="stSidebar"] [data-testid="stExpander"] {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    margin-top: 0.05rem;
+    color: #FFFFFF !important;
+    width: 100% !important;
+    border-bottom: 4px solid #F7871F;
+    overflow: hidden;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+/* Expander sem borda inferior (ex: Executar validação) */
+[data-testid="stSidebar"] [data-testid="stExpander"]:last-of-type {
+    border-bottom: none;
+}
+
+/* Este é o summary do expander, que é o título clicável. Ele é um flex container
+para alinhar o ícone de seta e o texto. */
+[data-testid="stSidebar"] [data-testid="stExpander"] details > summary {
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    background-color: rgba(255,255,255,0.10);
+    font-weight: bold;
+}
+
+/* deixando o título do expander em negrito*/
+[data-testid="stSidebar"] [data-testid="stExpander"] details > summary p,
+[data-testid="stSidebar"] [data-testid="stExpander"] details > summary span {
+    font-weight: bold !important;
+} 
+
+
+
+/* Sub-nav: radio dentro do expander de seções */
+[data-testid="stSidebar"] [data-testid="stExpander"] [data-testid="stRadio"] > div {
+    gap: 2px !important;
+}
+[data-testid="stSidebar"] [data-testid="stExpander"] [data-testid="stRadio"] label {
+    font-size: 0.82rem !important;
+    padding: 4px 6px !important;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
+    width: 100%;
+}
+[data-testid="stSidebar"] [data-testid="stExpander"] [data-testid="stRadio"] label:hover {
+    background-color: #EC6608 !important;
+}
+/* Círculo do radio: cor da marca */
+[data-testid="stSidebar"] [data-testid="stExpander"] [data-testid="stRadio"] [data-baseweb="radio"] [data-checked="true"] div {
+    background-color: #F7871F !important;
+    border-color: #F7871F !important;
+}
+
+/* ---- Popover (flutua fora do sidebar, mas herda cor de texto branca) ---- */
+[data-testid="stPopoverBody"] {
+    background-color: #403D4A !important;
+}
+[data-testid="stPopoverBody"] p,
+[data-testid="stPopoverBody"] label,
+[data-testid="stPopoverBody"] span,
+[data-testid="stPopoverBody"] small {
+    color: #e8e8e8 !important;
+}
+
+/* ---- Botões INATIVOS ---- */
+[data-testid="stSidebar"] .stButton button,
+[data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] {
+    background-color: rgba(255, 255, 255, 0.07) !important;
+    color: #E8E8E8 !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    border-radius: 8px !important;
+    padding: 10px 15px !important;
+    text-align: left !important;
+    justify-content: flex-start !important;  /* sobrescreve o flex-center do Streamlit */
+    font-weight: 500 !important;
+    font-size: 0.88rem !important;
+    width: 100% !important;
+    transition: background-color 0.2s ease !important;
+    box-shadow: none !important;
+}
+/* Alinha o conteúdo interno dos botões (Streamlit usa um <div> interno com flex) */
+[data-testid="stSidebar"] .stButton button > *,
+[data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] > * {
+    text-align: left !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+}
+[data-testid="stSidebar"] .stButton button:hover,
+[data-testid="stSidebar"] [data-testid="stBaseButton-secondary"]:hover {
+    background-color: rgba(247, 135, 31, 0.15) !important;
+    border-color: rgba(247, 135, 31, 0.55) !important;
+    color: #FFFFFF !important;
+    box-shadow: none !important;
+}
+/* Remove completamente o efeito de "pressionar" (translateY no botão E nos filhos) */
+[data-testid="stSidebar"] .stButton button:active,
+[data-testid="stSidebar"] .stButton button:active *,
+[data-testid="stSidebar"] [data-testid="stBaseButton-secondary"]:active,
+[data-testid="stSidebar"] [data-testid="stBaseButton-secondary"]:active *,
+[data-testid="stSidebar"] .stButton button:focus,
+[data-testid="stSidebar"] [data-testid="stBaseButton-secondary"]:focus {
+    transform: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* ---- Botão ATIVO (st.markdown com classe sidebar-button-active) ---- */
+/* border-color e box-shadow são definidos inline via Python com a cor da página */
+.sidebar-button-active {
+    background-color: rgba(255,255,255,0.10);
+    color: white !important;
+    border: none;
+    border-bottom: 4px solid #F7871F;   /* sobrescrito inline com cor da página */
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 10px 15px;
+    text-align: left;
+    font-weight: bold;
+    font-size: 0.88rem;
+    margin: 0px 0px 14px 0px;
+    display: block;
+    cursor: default;
+    user-select: none;
+    width: 100%;
+}
+
+/* =========================================================
+   CONTEÚDO PRINCIPAL
+   ========================================================= */
+
+/* ---- Títulos de seção ---- */
+[data-testid="stMarkdownContainer"] p.section-title {
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    color: #F7871F !important;
+    margin-bottom: 0.5rem;
+    margin-top: 1rem;
+}
+
+/* ---- Metric cards ---- */
+div[data-testid="stMetric"] {
+    border-radius: 8px;
+    padding: 12px 16px;
+}
+div[data-testid="stMetricValue"] > div {
+    font-size: 1.6rem !important;
+}
+
+/* ---- Multiselect — laranja CNseg ---- */
+[data-baseweb="select"] > div {
+    border-radius: 8px;
+    border-color: #F7871F !important;
+}
+[data-baseweb="tag"] {
+    background-color: #F7871F !important;
+    color: white !important;
+    border-radius: 6px;
+}
+[data-baseweb="tag"] span[role="presentation"] {
+    color: white !important;
+}
+[role="option"]:hover {
+    background-color: rgba(247, 135, 31, 0.12) !important;
+}
+[role="option"][aria-selected="true"] {
+    background-color: rgba(247, 135, 31, 0.22) !important;
+}
+
+/* ---- Rodapé fixo ---- */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #403D4A;
+    text-align: center;
+    padding: 5px 0;
+    font-size: 0.75rem;
+    color: #D9D8DB;
+    border-top: 1px solid #F7871F;
+    z-index: 100;
+}

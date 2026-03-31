@@ -1,0 +1,43 @@
+[theme]
+# Configurações globais (aplicam a ambos os temas)
+# Tipografia — Montserrat (fonte oficial do site da CNseg)
+font            = "'Montserrat':https://fonts.googleapis.com/css2?family=Montserrat:wght@300..700&display=swap"
+baseFontSize    = 14 # Tamanho da fonte base para o corpo do texto
+baseFontWeight  = 400 # Peso da fonte para o corpo do texto
+
+headingFont         = "Montserrat"
+headingFontWeights  = [700, 600, 600, 500, 400, 400]
+headingFontSizes    = ["2rem", "1.5rem", "1.15rem"] # Tamanhos para os st.subheader e titulos ou outros textos de seção 
+
+showWidgetBorder = true 
+
+# ── LIGHT (CNseg) ────────────────────────────────────────────
+[theme.light] # Configs gerais do tema light (inspirado na paleta de cores do site da CNseg)
+primaryColor    = "#F7871F"   # Cor cnseg. Essa cor é que será usada por segmented control,
+                                # botões selecionados (desde que não seja do sidebar) e outros elementos.
+                                # para um tom mais forte use #EC6608
+backgroundColor = "#fff6ef"    # inspirado em um gráfico da conjuntura [antes estava F7F6F2].
+                                 # essa é de fato a cor de fundo do ambiente (não sidebar)
+textColor       = "#403D4A"   # COR da fonte dos texto para o tema light (preto quase puro)
+borderColor     = "#DDB77A"   # cor da borda de containers e botões para o tema light
+
+[theme.light.sidebar] ## CONFIGS DO SIDEBAR PARA O TEMA LIGHT
+backgroundColor = "#403D4A"   # cor de fundo do SIDEBAR para o tema light
+textColor       = "#070101"   # texto escuro sobre fundo claro. No style.css, o texto do sidebar que não 
+                                # é de selectbox fica branco.
+primaryColor    = "#EC6608"  # cor de destaque para o circulado do RADIO BUTTON selecionado
+
+# ── DARK ─────────────────────────────────────────────────────
+[theme.dark] # Configs gerais do tema dark
+primaryColor    = "#F7871F"   # mantém o laranja CNseg no dark. pros botões st.segmented control etc
+backgroundColor = "#1E1B26"   # roxo-escuro derivado do #403D4A
+textColor       = "#E8E8E8"   # texto quando está no modo dark
+borderColor     = "#5A5060"   # controle de bordas para o dark. container e botões selecionados
+
+[theme.dark.sidebar] ## CONFIGS DO SIDEBAR PARA O TEMA DARK
+backgroundColor = "#403D4A"   # aqui é a cor de fundo do SIDEBAR no tema dark.
+textColor       = "#E8E8E8"  # texto claro sobre fundo escuro
+primaryColor    = "#EC6608"  # cor de destaque para o circulado do RADIO BUTTON selecionado
+
+# PARA OUTROS CONTROLES É INTERESSANTE DAR UMA OLHADA NO CSS DE style.css. Lá você encontra outros controles
+# que não daria para ser definidos aqui.
